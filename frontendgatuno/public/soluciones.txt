@@ -1,0 +1,70 @@
+// Problema 1: Las Casitas de los Gatos Numéricos
+var construirCasitas = function(cadenaJuguetes) {
+    const res = [];
+    const backtrack = (start = 0, path = []) => {
+        if (path.length === 4 && start === cadenaJuguetes.length) {
+            res.push(path.join('.'));
+            return;
+        }
+        if (path.length >= 4) return;
+
+        for (let len = 1; len <= 3; len++) {
+            if (start + len > cadenaJuguetes.length) break;
+            const part = cadenaJuguetes.substring(start, start + len);
+            if (part.length > 1 && part[0] === '0') continue;
+            if (parseInt(part) > 255) continue;
+            backtrack(start + len, [...path, part]);
+        }
+    };
+    backtrack();
+    return res;
+};
+
+// Problema 2: Secuencia de Siesta Felina
+var longitudSiesta = function(collares) {
+    const set = new Set(collares);
+    let maxLen = 0;
+
+    for (let num of set) {
+        if (!set.has(num - 1)) {
+            let current = num;
+            let length = 1;
+            while (set.has(current + 1)) {
+                current++;
+                length++;
+            }
+            maxLen = Math.max(maxLen, length);
+        }
+    }
+
+    return maxLen;
+};
+
+// Problema 3: Descifrando el Maullido Secreto
+var descifrarMaullido = function(maullido, diccionarioFelino) {
+    const dict = new Set(diccionarioFelino);
+    const memo = new Map();
+
+    const dfs = (s) => {
+        if (memo.has(s)) return memo.get(s);
+        const res = [];
+
+        if (dict.has(s)) res.push(s);
+
+        for (let i = 1; i < s.length; i++) {
+            const left = s.slice(0, i);
+            const right = s.slice(i);
+            if (dict.has(right)) {
+                const prev = dfs(left);
+                for (let sentence of prev) {
+                    res.push(sentence + " " + right);
+                }
+            }
+        }
+
+        memo.set(s, res);
+        return res;
+    };
+
+    return dfs(maullido);
+};
